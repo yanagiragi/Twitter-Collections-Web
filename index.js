@@ -15,7 +15,6 @@ app.use(function (req, res, next) {
 
 // outer static
 const staticPicDir = path.join(__dirname, process.argv[2])
-
 app.use('/static', express.static(staticPicDir));
 
 // local static
