@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title><3</title>
+	<link rel="shortcut icon" href="icon.ico" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+	<style>
+		body {
+			background-color: #313338;			
+        }
+        
+        .twitterIcon {
+            width: 48px !important;
+            height: 48px !important;
+        }
+        
+        .title{
+            margin: 0px auto;
+            margin-bottom: -186px;
+            width: 50%;
+            background: inherit;
+            height: 200px;
+            box-shadow: inset 0 0 0 3000px rgba(0, 0, 0, 0.61);
+            filter: blur(6px);
+            z-index: -1;
+        }
+        
+        .right-align > .title {
+            margin-left: 55%;
+        }
+        
+        .left-align > .title {
+            margin-left: -5%;
+        }
+        
+        .titleText {
+            text-shadow: 1px 1px gray;
+        }
+
+        .carousel .carousel-item {
+            width: 400px !important;
+            height: 400px !important;
+        }
+
+        .zoomImg {
+            transition: all .2s ease-in-out; 
+        }
+
+        .zoomImg:hover {           
+            /*transform: scale(1.35);*/
+        }
+
+        .modal {
+			height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background: inherit;
+		}
+
+        #modal1 {
+            box-shadow: 0 0px 0px 0px rgba(0, 0, 0, 0),0 0px 0px 0px rgba(0, 0, 0, 0),0 0px 0px 0px rgba(0,0,0,0) !important;
+            -webkit-box-shadow: 0 0px 0px 0px rgba(0, 0, 0, 0),0 0px 0px 0px rgba(0, 0, 0, 0),0 0px 0px 0px rgba(0,0,0,0) !important;
+        }
+
+        .modal-content {
+            text-align: center;
+        }
+
+        .tabs-content.carousel { height: 100%; overflow-x:hidden; overflow-y: scroll; } 
+        .tabs-content.carousel .carousel-item { width: 100%; height: 100%; } 
+        
+	</style>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="referrer" content="no-referrer">
+</head>
+
+<body>
+	
+    <div class="container">
+        <!-- Modal Structure -->
+        <div id="modal1" class="modal" @click="closeModal">
+            <div class="modal-content">
+                <img v-bind:src="modalSrc" style="max-height: 600px;">
+            </div>
+        </div>
+
+        <div class="slider fullscreen">
+            <ul class="slides">
+                <li v-for="(container, index) in data">
+                    <img v-bind:src="`static/${container.dir}/${container.thumb}`">
+                    <div class="caption" v-bind:class="GetAlignmentObject(index)">
+                        <div class="title"></div>
+                        <h3 class="titleText">{{ container.dir }}</h3>
+                        
+                        <h5 class="light grey-text text-lighten-3">
+                            <a v-bind:href="`https://twitter.com/${container.dir}`">
+                                <img class="twitterIcon" src="static/twitter.png" alt="twitter"/>
+                            </a>
+                        </h5>
+                        
+                        <div class="row" style="margin-top: 100px;">
+                            <div class="col s12">
+                                <h3> </h3>
+                                <div class="carousel _carousel-slider">
+                                    <a v-for="(src, sindex) in container.files" class="carousel-item" @click="showModal($event, index, sindex)">
+                                        <img class="zoomImg" v-bind:src="`static/${container.dir}/${src}`">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+      
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.1/vue.min.js"></script>
+
+    <script>
+        const vueInstance = new Vue({
+            el: '.container',
+            data: {
+                data: [],
+                modalSrc: '',
+                initialized: false
+            },
+            computed: {
+               
+            },
+            methods: {
+                GetAlignmentObject: function(index){
+                    return {
+                        'left-align': index % 3 == 0,
+                        'center-align': index % 3 == 1,
+                        'right-align': index % 3 == 2                        
+                    }
+                },
+                refreshView: function() {
+                    //$('.materialboxed').materialbox()
+                    $('.slider').slider({full_width: true, interval: 1e9});
+                    $('.carousel').carousel({
+                        //duration: 200,
+                        dist: -100,
+                        indicators: true,
+                        noWrap: false,
+                        numVisible: 12
+                    })
+                    $('.modal').modal();
+                    $('.sidenav').sidenav({
+                        draggable: true
+                    });
+                    console.log(`initialized.`)
+                },
+                shuffle: function(a) {
+                    for (let i = a.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [a[i], a[j]] = [a[j], a[i]];
+                    }
+                    return a;
+                },
+                showModal: function(event, idx, sidx){
+                    event.stopPropagation()
+                    const url = `static/${this.data[idx].dir}/${this.data[idx].files[sidx]}`
+                    this.modalSrc = url
+                    $('.modal').modal('open');
+                },
+                closeModal: function() {
+                    $('.modal').modal('close');
+                }
+            },
+            mounted : function(){
+                $.ajax({ url: '/json', dataType: 'json'}).done(data => {
+                    this.data = data
+                    this.data.map(ele => {
+                        ele.files = this.shuffle(ele.files)
+                    })
+
+                    // update carousel until 500ms, for waiting vue to update
+                    // setTimeout(this.refreshView, 1000 * .5)
+                })
+            },
+            updated() {
+                if(!this.initialized){
+                    this.initialized = true;
+                    this.refreshView()                
+                }
+            }
+        })
+    </script>
+</body>
+</html>

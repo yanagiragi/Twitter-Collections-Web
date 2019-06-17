@@ -1,0 +1,23 @@
+{
+  "name": "twitter-collections-web",
+  "version": "1.0.0",
+  "description": "Visualized web for self crawler: https://github.com/yanagiragi/Twitter-Downloader",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanagiragi/Twitter-Collections-Web.git"
+  },
+  "author": "yanagiragi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yanagiragi/Twitter-Collections-Web/issues"
+  },
+  "homepage": "https://github.com/yanagiragi/Twitter-Collections-Web#readme"
+}
