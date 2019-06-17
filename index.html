@@ -180,9 +180,9 @@
             mounted : function(){
                 $.ajax({ url: '/json', dataType: 'json'}).done(data => {
                     this.data = data
-                    this.data.map(ele => {
+                    /*this.data.map(ele => {
                         ele.files = this.shuffle(ele.files)
-                    })
+                    })*/
 
                     // update carousel until 500ms, for waiting vue to update
                     // setTimeout(this.refreshView, 1000 * .5)
