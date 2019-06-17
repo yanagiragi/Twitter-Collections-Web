@@ -47,10 +47,11 @@ app.get('/json', function (req, res) {
 
     const filteredFiles = files.map(x => {
 		const sorted = x.files.sort((y, z) => {
-			const birthDateY = fs.statSync(path.join(staticPicDir, x.dir, y))['birthDate']
-			const birthDateZ = fs.statSync(path.join(staticPicDir, x.dir, z))['birthDate']
-			return birthDateY - birthDateZ
+			const birthDateY = fs.statSync(path.join(staticPicDir, x.dir, y))['birthtimeMs']
+			const birthDateZ = fs.statSync(path.join(staticPicDir, x.dir, z))['birthtimeMs']
+			return birthDateZ - birthDateY
 		})
+
 		x.files = sorted.slice(0, 20)
 		return x
 	})
