@@ -34,7 +34,9 @@ app.get('/json', function (req, res) {
             files: files,
             thumb: files.reduce((acc, ele) => {
                 // get largest file
-                const size = fs.statSync(path.join(staticPicDir, x, ele))['size']
+                // const size = fs.statSync(path.join(staticPicDir, x, ele))['size']
+                // get latest file
+                const size = fs.statSync(path.join(staticPicDir, x, ele))['birthtimeMs']
                 if(size > acc.size){
                     return { file: ele, size: size }
                 }
