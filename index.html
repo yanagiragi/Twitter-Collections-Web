@@ -80,16 +80,22 @@
 </head>
 
 <body>
-	
+
     <div class="container">
         <!-- Modal Structure -->
         <div id="modal1" class="modal" @click="closeModal">
             <div class="modal-content">
-                <img v-bind:src="modalSrc" style="max-height: 600px;">
+                <img v-bind:src="modalSrc" style="max-height: 900px;">
             </div>
         </div>
 
-        <div class="slider fullscreen">
+		<!--
+			div cannot be focused, so it cannot catch keyboard event
+			default focus element is body, check document.activeElement
+			so we use tabindex to enable focus, note that only position value and 0 can work with keyboards
+			https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes/tabindex
+		-->
+        <div id="sliderFullscreen" tabindex="-1" class="slider fullscreen" @click="HandleMouseEvent" @keyup="HandleKeyEvent">
             <ul class="slides">
                 <li v-for="(container, index) in data">
                     <img v-bind:src="`static/${container.dir}/${container.thumb}`">
@@ -98,7 +104,7 @@
                         <h3 class="titleText">{{ container.dir }}</h3>
                         
                         <h5 class="light grey-text text-lighten-3">
-                            <a v-bind:href="`https://twitter.com/${container.dir}`">
+                            <a v-bind:href="`https://twitter.com/${container.dir}`" rel="noopener" target="_blank">
                                 <img class="twitterIcon" src="static/twitter.png" alt="twitter"/>
                             </a>
                         </h5>
@@ -175,7 +181,39 @@
                 },
                 closeModal: function() {
                     $('.modal').modal('close');
-                }
+                },
+                HandleKeyEvent: function(event) {
+					const sliderElement = $('#sliderFullscreen')
+					switch(event.key){
+						case 'ArrowDown':
+							sliderElement.slider('next'); break;
+						case 'ArrowUp':
+							sliderElement.slider('prev'); break;
+						case 'ArrowLeft':
+							$('.active .carousel').carousel('prev'); break;
+						case 'ArrowRight':
+							$('.active .carousel').carousel('next'); break;
+						default:
+							break;
+					}
+				},
+				HandleMouseEvent: function(event) {
+					
+					// filter handling when click on twitter link
+					if([...$('.twitterIcon')].includes(event.target)){
+						return
+					}
+					
+					const sliderElement = $('#sliderFullscreen')
+					const half = sliderElement.width() / 2
+					
+					if(event.clientX > half) {
+						$('.active .carousel').carousel('next')
+					}
+					else {
+						$('.active .carousel').carousel('prev')
+					}
+				}
             },
             mounted : function(){
                 $.ajax({ url: '/json', dataType: 'json'}).done(data => {
