@@ -83,7 +83,8 @@
 
     <div class="container">
         <!-- Modal Structure -->
-        <div id="modal1" class="modal" @click="closeModal">
+        <!-- additonal key handler to let sliderFullScreen Auto focues after using escapse key to close modal -->
+        <div id="modal1" class="modal" @click="CloseModal" @keyup.esc="RetrieveFocus">
             <div class="modal-content">
                 <img v-bind:src="modalSrc" style="max-height: 900px;">
             </div>
@@ -113,7 +114,7 @@
                             <div class="col s12">
                                 <h3> </h3>
                                 <div class="carousel _carousel-slider">
-                                    <a v-for="(src, sindex) in container.files" class="carousel-item" @click="showModal($event, index, sindex)">
+                                    <a v-for="(src, sindex) in container.files" class="carousel-item" @click="ShowModal($event, index, sindex)">
                                         <img class="zoomImg" v-bind:src="`static/${container.dir}/${src}`">
                                     </a>
                                 </div>
@@ -150,7 +151,7 @@
                         'right-align': index % 3 == 2                        
                     }
                 },
-                refreshView: function() {
+                RefreshView: function() {
                     //$('.materialboxed').materialbox()
                     $('.slider').slider({full_width: true, interval: 1e9});
                     $('.carousel').carousel({
@@ -166,21 +167,22 @@
                     });
                     console.log(`initialized.`)
                 },
-                shuffle: function(a) {
+                Shuffle: function(a) {
                     for (let i = a.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
                         [a[i], a[j]] = [a[j], a[i]];
                     }
                     return a;
                 },
-                showModal: function(event, idx, sidx){
+                ShowModal: function(event, idx, sidx){
                     event.stopPropagation()
                     const url = `static/${this.data[idx].dir}/${this.data[idx].files[sidx]}`
                     this.modalSrc = url
                     $('.modal').modal('open');
                 },
-                closeModal: function() {
+                CloseModal: function() {
                     $('.modal').modal('close');
+                    this.RetrieveFocus()
                 },
                 HandleKeyEvent: function(event) {
 					const sliderElement = $('#sliderFullscreen')
@@ -213,13 +215,16 @@
 					else {
 						$('.active .carousel').carousel('prev')
 					}
+				},
+				RetrieveFocus: function(){
+					$('#sliderFullscreen').focus()
 				}
             },
             mounted : function(){
                 $.ajax({ url: '/json', dataType: 'json'}).done(data => {
                     this.data = data
                     /*this.data.map(ele => {
-                        ele.files = this.shuffle(ele.files)
+                        ele.files = this.Shuffle(ele.files)
                     })*/
 
                     // update carousel until 500ms, for waiting vue to update
@@ -229,7 +234,7 @@
             updated() {
                 if(!this.initialized){
                     this.initialized = true;
-                    this.refreshView()                
+                    this.RefreshView()
                 }
             }
         })
