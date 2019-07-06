@@ -96,7 +96,7 @@
 			so we use tabindex to enable focus, note that only position value and 0 can work with keyboards
 			https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes/tabindex
 		-->
-        <div id="sliderFullscreen" tabindex="-1" class="slider fullscreen" @click="HandleMouseEvent" @keyup="HandleKeyEvent">
+        <div id="sliderFullscreen" tabindex="-1" class="slider fullscreen" @click="HandleMouseEvent" @keyup="HandleKeyEvent" @keydown="HandleKeyEvent(event, true)">
             <ul class="slides">
                 <li v-for="(container, index) in data">
                     <img v-bind:src="`static/${container.dir}/${container.thumb}`">
@@ -184,7 +184,10 @@
                     $('.modal').modal('close');
                     this.RetrieveFocus()
                 },
-                HandleKeyEvent: function(event) {
+                HandleKeyEvent: function(event, flag=false) {
+                	const preventDown = ['Enter', 'ArrowDown', 'ArrowUp']
+					if(flag && preventDown.includes(event.key))
+						return
 					const sliderElement = $('#sliderFullscreen')
 					switch(event.key){
 						case 'ArrowDown':
@@ -211,7 +214,6 @@
 					}
 				},
 				HandleMouseEvent: function(event) {
-					
 					// filter handling when click on twitter link
 					if([...$('.twitterIcon')].includes(event.target)){
 						return
