@@ -84,7 +84,7 @@
     <div class="container">
         <!-- Modal Structure -->
         <!-- additonal key handler to let sliderFullScreen Auto focues after using escapse key to close modal -->
-        <div id="modal1" class="modal" @click="CloseModal" @keyup.esc="RetrieveFocus">
+        <div id="modal1" class="modal" @click="CloseModal" @keyup.esc="RetrieveFocus" @keyup.enter="CloseModal">
             <div class="modal-content">
                 <img v-bind:src="modalSrc" style="max-height: 900px;">
             </div>
@@ -195,6 +195,17 @@
 							$('.active .carousel').carousel('prev'); break;
 						case 'ArrowRight':
 							$('.active .carousel').carousel('next'); break;
+						case 'Enter':
+							if($('#modal1').hasClass('open')){
+								// actually no need
+								// since focused element is #modal1
+								// so we additionally use another handler on #modal1
+								// to support action "press enter to close modal"
+								// $('#modal1')[0].click()
+							}
+							else {
+								$('li.active .carousel-item.active')[0].click()
+							}
 						default:
 							break;
 					}
