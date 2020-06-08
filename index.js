@@ -7,6 +7,8 @@ const app = express()
 // examples
 // node index.js ../Images
 
+const cacheTime = 1000 * 60 * 60 * 24 * 30 // a month
+
 app.use(function (req, res, next) {
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
 	console.log(`${new Date()} [${req.method}] ${ip} ${req.originalUrl}`)
@@ -15,10 +17,14 @@ app.use(function (req, res, next) {
 
 // outer static
 const staticPicDir = path.join(__dirname, process.argv[2])
-app.use('/static', express.static(staticPicDir))
+app.use('/static', express.static(staticPicDir, {
+	maxAge: cacheTime
+}))
 
 // local static
-app.use('/static', express.static('static'))
+app.use('/static', express.static('static', {
+	maxAge: cacheTime
+}))
 
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname, '/index.html'))
