@@ -110,10 +110,10 @@
                             </a>
                         </h5>
                         
-                        <div class="row" style="margin-top: 100px;">
+                        <div class="row" style="margin-top: 5%;">
                             <div class="col s12">
                                 <h3> </h3>
-                                <div class="carousel _carousel-slider">
+                                <div class="carousel _carousel-slider" style="overflow: visible;">
                                     <a v-for="(src, sindex) in container.files" class="carousel-item" @click="ShowModal($event, index, sindex)">
                                         <img class="zoomImg lazy" src="static/loading.gif" v-bind:data-src="`static/${container.dir}/${src}`">
                                     </a>
