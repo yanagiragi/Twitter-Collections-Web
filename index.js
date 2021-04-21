@@ -65,6 +65,30 @@ app.get('/json', function (req, res) {
 	res.send(JSON.stringify(filteredFiles, null, 4))
 })
 
+app.get('/stat', function (req, res) {
+	const dirs = fs.readdirSync(staticPicDir).filter(x => fs.lstatSync(path.join(staticPicDir, x)).isDirectory() && x.includes("_Container") == false)
+	const files = dirs.map(x => Object.assign({}, {
+		dir: x,
+		files: fs.readdirSync( path.join(staticPicDir, x) ).map(el => Object.assign({}, { 
+			filename: el,
+			birth: fs.statSync( path.join(staticPicDir, x, el) )['birthtimeMs'] 
+		}))
+	}))
+
+	const filteredFiles = files.map(x => {
+		x.files = x.files.sort((y, z) => z.birth - y.birth).slice(0, 5)
+		return x.files.map(el => Object.assign({}, { dir: x.dir, filename: el.filename, birth: el.birth }))
+	}).flat().sort((x, y) => y.birth - x.birth)
+
+	const result = {}
+	for(const data of filteredFiles) {
+		result[`${data.dir} - ${data.filename}`] = fs.statSync(path.join(staticPicDir, data.dir, data.filename))['ctime']
+	}
+
+	res.setHeader('Content-Type', 'application/json')
+	res.send(JSON.stringify(result, null, 4))
+})
+
 // C8763
 app.listen(8763, function () {
 	console.log('Example app listening on port 8763!')
