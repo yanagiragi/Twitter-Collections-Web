@@ -1,4 +1,3 @@
-
 const express = require('express')
 const path = require('path')
 const fs = require('fs')
@@ -31,7 +30,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/json', function (req, res) {
-	const dirs = fs.readdirSync(staticPicDir).filter(x => fs.lstatSync(path.join(staticPicDir, x)).isDirectory())
+	const dirs = fs.readdirSync(staticPicDir).filter(x => fs.lstatSync(path.join(staticPicDir, x)).isDirectory() && x.includes("_Container") == false)
 	const files = dirs.map(x => {
 		const files = fs.readdirSync(path.join(staticPicDir, x))
 		return {
@@ -58,7 +57,7 @@ app.get('/json', function (req, res) {
 			return birthDateZ - birthDateY
 		})
 
-		x.files = sorted.slice(0, 20)
+		x.files = sorted.slice(0, 5)
 		return x
 	})
 
