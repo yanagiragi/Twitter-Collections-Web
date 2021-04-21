@@ -30,7 +30,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/json', function (req, res) {
-	const dirs = fs.readdirSync(staticPicDir).filter(x => fs.lstatSync(path.join(staticPicDir, x)).isDirectory() && x.includes("_Container") == false)
+	const dirs = fs.readdirSync(staticPicDir).filter(x => fs.lstatSync(path.join(staticPicDir, x)).isDirectory() && x.includes('_Container') === false)
 	const files = dirs.map(x => {
 		const files = fs.readdirSync(path.join(staticPicDir, x))
 		return {
@@ -40,7 +40,7 @@ app.get('/json', function (req, res) {
 				// get largest file
 				// const size = fs.statSync(path.join(staticPicDir, x, ele))['size']
 				// get latest file
-				const size = fs.statSync(path.join(staticPicDir, x, ele))['birthtimeMs']
+				const size = fs.statSync(path.join(staticPicDir, x, ele)).birthtimeMs
 				if (size > acc.size) {
 					return { file: ele, size: size }
 				} else {
@@ -52,8 +52,8 @@ app.get('/json', function (req, res) {
 
 	const filteredFiles = files.map(x => {
 		const sorted = x.files.sort((y, z) => {
-			const birthDateY = fs.statSync(path.join(staticPicDir, x.dir, y))['birthtimeMs']
-			const birthDateZ = fs.statSync(path.join(staticPicDir, x.dir, z))['birthtimeMs']
+			const birthDateY = fs.statSync(path.join(staticPicDir, x.dir, y)).birthtimeMs
+			const birthDateZ = fs.statSync(path.join(staticPicDir, x.dir, z)).birthtimeMs
 			return birthDateZ - birthDateY
 		})
 
@@ -66,12 +66,12 @@ app.get('/json', function (req, res) {
 })
 
 app.get('/stat', function (req, res) {
-	const dirs = fs.readdirSync(staticPicDir).filter(x => fs.lstatSync(path.join(staticPicDir, x)).isDirectory() && x.includes("_Container") == false)
+	const dirs = fs.readdirSync(staticPicDir).filter(x => fs.lstatSync(path.join(staticPicDir, x)).isDirectory() && x.includes('_Container') === false)
 	const files = dirs.map(x => Object.assign({}, {
 		dir: x,
-		files: fs.readdirSync( path.join(staticPicDir, x) ).map(el => Object.assign({}, { 
+		files: fs.readdirSync(path.join(staticPicDir, x)).map(el => Object.assign({}, {
 			filename: el,
-			birth: fs.statSync( path.join(staticPicDir, x, el) )['birthtimeMs'] 
+			birth: fs.statSync(path.join(staticPicDir, x, el)).birthtimeMs
 		}))
 	}))
 
@@ -81,8 +81,8 @@ app.get('/stat', function (req, res) {
 	}).flat().sort((x, y) => y.birth - x.birth)
 
 	const result = {}
-	for(const data of filteredFiles) {
-		result[`${data.dir} - ${data.filename}`] = fs.statSync(path.join(staticPicDir, data.dir, data.filename))['ctime']
+	for (const data of filteredFiles) {
+		result[`${data.dir} - ${data.filename}`] = fs.statSync(path.join(staticPicDir, data.dir, data.filename)).ctime
 	}
 
 	res.setHeader('Content-Type', 'application/json')

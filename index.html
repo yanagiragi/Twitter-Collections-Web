@@ -135,148 +135,142 @@
 
     <script>
         const vueInstance = new Vue({
-            el: '.container',
-            data: {
-                data: [],
-                modalSrc: '',
-                initialized: false,
-                watcher: ''
-            },
-            computed: {
-               
-            },
-            methods: {
-                GetAlignmentObject: function(index){
-                    return {
-                        'left-align': index % 3 == 0,
-                        'center-align': index % 3 == 1,
-                        'right-align': index % 3 == 2                        
-                    }
-                },
-                RefreshView: function() {
-                    //$('.materialboxed').materialbox()
-                    $('.slider').slider({full_width: true, interval: 1e9});
-                    $('.carousel').carousel({
-                        duration: 60,
-                        dist: -100,
-                        indicators: true,
-                        noWrap: false,
-                        numVisible: 12
-                    })
-                    $('.modal').modal();
-                    $('.sidenav').sidenav({
-                        draggable: true
-                    });
-                    console.log(`initialized.`)
-                },
-                Shuffle: function(a) {
-                    for (let i = a.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [a[i], a[j]] = [a[j], a[i]];
-                    }
-                    return a;
-                },
-                ShowModal: function(event, idx, sidx){
-                    event.stopPropagation()
-                    const url = `static/${this.data[idx].dir}/${this.data[idx].files[sidx]}`
-                    this.modalSrc = url
-                    $('.modal').modal('open');
-                },
-                CloseModal: function() {
-                    $('.modal').modal('close');
-                    this.RetrieveFocus()
-                },
-                HandleKeyEvent: function(event, flag=false) {
-                	const preventDown = ['Enter', 'ArrowDown', 'ArrowUp']
-					if(flag && preventDown.includes(event.key))
-						return
-					else if(!flag && !preventDown.includes(event.key))
-						return 
+        	el: '.container',
+        	data: {
+        		data: [],
+        		modalSrc: '',
+        		initialized: false,
+        		watcher: ''
+        	},
+        	computed: {
+        
+        	},
+        	methods: {
+        		GetAlignmentObject: function (index) {
+        			return {
+        				'left-align': index % 3 === 0,
+        				'center-align': index % 3 === 1,
+        				'right-align': index % 3 === 2
+        			}
+        		},
+        		RefreshView: function () {
+        			// $('.materialboxed').materialbox()
+        			$('.slider').slider({ full_width: true, interval: 1e9 })
+        			$('.carousel').carousel({
+        				duration: 60,
+        				dist: -100,
+        				indicators: true,
+        				noWrap: false,
+        				numVisible: 12
+        			})
+        			$('.modal').modal()
+        			$('.sidenav').sidenav({
+        				draggable: true
+        			})
+        			console.log('initialized.')
+        		},
+        		Shuffle: function (a) {
+        			for (let i = a.length - 1; i > 0; i--) {
+        				const j = Math.floor(Math.random() * (i + 1));
+        				[a[i], a[j]] = [a[j], a[i]]
+        			}
+        			return a
+        		},
+        		ShowModal: function (event, idx, sidx) {
+        			event.stopPropagation()
+        			const url = `static/${this.data[idx].dir}/${this.data[idx].files[sidx]}`
+        			this.modalSrc = url
+        			$('.modal').modal('open')
+        		},
+        		CloseModal: function () {
+        			$('.modal').modal('close')
+        			this.RetrieveFocus()
+        		},
+        		HandleKeyEvent: function (event, flag = false) {
+					const preventDown = ['Enter', 'ArrowDown', 'ArrowUp']
+					if (flag && preventDown.includes(event.key)) { return } else if (!flag && !preventDown.includes(event.key)) { return }
 					const sliderElement = $('#sliderFullscreen')
-					switch(event.key){
+					switch (event.key) {
 						case 'ArrowDown':
-							sliderElement.slider('next'); break;
+							sliderElement.slider('next'); break
 						case 'ArrowUp':
-							sliderElement.slider('prev'); break;
+							sliderElement.slider('prev'); break
 						case 'ArrowLeft':
-							$('.active .carousel').carousel('prev'); break;
+							$('.active .carousel').carousel('prev'); break
 						case 'ArrowRight':
-							$('.active .carousel').carousel('next'); break;
+							$('.active .carousel').carousel('next'); break
 						case 'Enter':
-							if($('#modal1').hasClass('open')){
+							if ($('#modal1').hasClass('open')) {
 								// actually no need
 								// since focused element is #modal1
 								// so we additionally use another handler on #modal1
 								// to support action "press enter to close modal"
 								// $('#modal1')[0].click()
-							}
-							else {
+							} else {
 								$('li.active .carousel-item.active')[0].click()
 							}
 						default:
-							break;
+							break
 					}
 				},
-				HandleMouseEvent: function(event) {
+				HandleMouseEvent: function (event) {
 					// filter handling when click on twitter link
-					if([...$('.twitterIcon')].includes(event.target)){
+					if ([...$('.twitterIcon')].includes(event.target)) {
 						return
 					}
-					
+
 					const sliderElement = $('#sliderFullscreen')
 					const half = sliderElement.width() / 2
-					
-					if(event.clientX > half) {
+
+					if (event.clientX > half) {
 						$('.active .carousel').carousel('next')
-					}
-					else {
+					} else {
 						$('.active .carousel').carousel('prev')
 					}
 				},
-				RetrieveFocus: function(){
+				RetrieveFocus: function () {
 					$('#sliderFullscreen').focus()
 				},
-                onEnterView: function(entries, observer) {
-                    // console.log(entries)
-                    for (let entry of entries) {
-                        if (entry.isIntersecting) {
-                            const img = entry.target
-                            img.setAttribute('src', img.dataset.src)
-                            img.removeAttribute('data-src')
-                            observer.unobserve(img)
-                        }
-                    }
-                }
-            },
-            mounted : function(){
-                $.ajax({ url: '/json', dataType: 'json'}).done(data => {
-                    this.data = data
-                    /*this.data.map(ele => {
+        		onEnterView: function (entries, observer) {
+        			// console.log(entries)
+        			for (const entry of entries) {
+        				if (entry.isIntersecting) {
+        					const img = entry.target
+        					img.setAttribute('src', img.dataset.src)
+        					img.removeAttribute('data-src')
+        					observer.unobserve(img)
+        				}
+        			}
+        		}
+        	},
+        	mounted: function () {
+        		$.ajax({ url: '/json', dataType: 'json' }).done(data => {
+        			this.data = data
+        			/* this.data.map(ele => {
                         ele.files = this.Shuffle(ele.files)
-                    })*/
+                    }) */
 
-                    // update carousel until 500ms, for waiting vue to update
-                    // setTimeout(this.refreshView, 1000 * .5)
+        			// update carousel until 500ms, for waiting vue to update
+        			// setTimeout(this.refreshView, 1000 * .5)
 
-                    // set update lazy loading after 0.1 sec
-                    setTimeout(() => {
-                        this.watcher = new IntersectionObserver(this.onEnterView)
-                        const lazyImages = document.querySelectorAll('img.lazy')
-                        for (let image of lazyImages) {
-                            this.watcher.observe(image)
-                        }
-                    }, 100)
-                    
-                })                
+        			// set update lazy loading after 0.1 sec
+        			setTimeout(() => {
+        				this.watcher = new IntersectionObserver(this.onEnterView)
+        				const lazyImages = document.querySelectorAll('img.lazy')
+        				for (const image of lazyImages) {
+        					this.watcher.observe(image)
+        				}
+        			}, 100)
+        		})
 
-                this.RetrieveFocus()
-            },
-            updated() {
-                if(!this.initialized){
-                    this.initialized = true;
-                    this.RefreshView()
-                }
-            }
+        		this.RetrieveFocus()
+        	},
+        	updated () {
+        		if (!this.initialized) {
+        			this.initialized = true
+        			this.RefreshView()
+        		}
+        	}
         })
     </script>
 </body>
